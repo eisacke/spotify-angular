@@ -1,0 +1,36 @@
+<!-- <div class="row">
+  <div class="col-12">
+    <ul class="messages">
+      <li ng-repeat="message in messagesIndex.messages">{{ message.sentBy.username }}: {{ message.content }} <button ng-click="messagesIndex.deleteMessage(message)" class="button" ng-if="main.isAuthenticated() && main.currentUserId === message.sentBy.id">Delete</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <form ng-submit="messagesIndex.addMessage()" class="new-message">
+      <input type="text" ng-model="messagesIndex.newMessage.content">
+      <button class="button">Send</button>
+    </form>
+  </div>
+</div> -->
+
+<div class="row">
+  <div class="col-12">
+    <ul class="messages gap">
+      <li ng-repeat="message in messagesIndex.messages"><span ng-if="message.sentBy">{{ message.sentBy.username }}: </span>{{ message.content }} <button ng-click="messagesIndex.deleteMessage(message)" class="button" ng-if="main.isAuthenticated() && main.currentUserId === message.sentBy.id">Delete</button></li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <form ng-submit="messagesIndex.sendMessage()" class="new-message gap">
+      <input type="text" ng-model="messagesIndex.message.content" ng-change="messagesIndex.isTyping()">
+      <button class="button">Send</button>
+    </form>
+    <div class="typing">
+      <span ng-repeat="user in messagesIndex.typing">{{ user }} is typing</span>
+    </div>
+  </div>
+</div>

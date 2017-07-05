@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="spotifyApp">
+  <head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>WDI Project 3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,700|Rubik:400,700" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js" charset="utf-8"></script>
+    <!-- inject:js -->
+    <!-- endinject -->
+    <!-- inject:css -->
+    <!-- endinject -->
+  </head>
+  <body ng-controller="MainCtrl as main">
+    <header>
+      <nav>
+        <ul>
+          <li><a ui-sref="home"><img src="images/headphones.svg"></a></li>
+          <li ng-if="!main.isAuthenticated()"><a ui-sref-active="active" ui-sref="login">Login</a></li>
+          <li ng-if="!main.isAuthenticated()"><a ui-sref-active="active" ui-sref="register">Register</a></li>
+          <li ng-if="main.isAuthenticated()"><a ui-sref-active="active" ui-sref="usersShow({ id: main.currentUserId })">Profile</a></li>
+          <li ng-if="main.isAuthenticated()"><a ui-sref-active="active" ui-sref="messagesIndex">Messages</a></li>
+          <li ng-if="main.isAuthenticated()"><a ng-click="main.logout()">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div ng-if="main.message">
+      {{ main.message }}
+    </div>
+    <main>
+      <div class="container-fluid" ui-view></div>
+    </main>
+  </body>
+</html>

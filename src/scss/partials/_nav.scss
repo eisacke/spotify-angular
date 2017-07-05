@@ -1,0 +1,23 @@
+nav {
+  width: 25%;
+  background-color: white;
+  height: 100vh;
+  float: left;
+  text-align: center;
+  padding: 50px 15px;
+  ul {
+    li {
+      margin-bottom: 10px;
+      a {
+        cursor: pointer;
+        &.active {
+          text-decoration: underline;
+        }
+        img {
+          width: 50px;
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}

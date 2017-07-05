@@ -1,0 +1,22 @@
+<h1>{{ usersShow.user.username }}</h1>
+
+<div class="gap">
+  <button ng-click="usersShow.formVisible = !usersShow.formVisible" class="button">Create playlist</button>
+  <button ng-click="usersShow.usersDelete()" class="button">Delete Account</button>
+</div>
+
+<div class="gap" ng-show="usersShow.formVisible">
+  <form ng-submit="usersShow.createPlaylist()">
+    <input type="text" ng-model="usersShow.playlist.name">
+    <button class="button">Create</button>
+  </form>
+</div>
+
+<div class="list">
+  <ul>
+    <li ng-repeat="playlist in usersShow.playlists" ng-if="usersShow.user.spotifyId == playlist.owner.id">
+      {{ playlist.name }}
+      <a ui-sref="playlistsShow({ id: usersShow.user.id, playlistId: playlist.id })" class="button button--small">View</a>
+    </li>
+  </ul>
+</div>
