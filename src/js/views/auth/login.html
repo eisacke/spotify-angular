@@ -1,11 +1,11 @@
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-6">
     <h2>Log in</h2>
-    <form name="login.loginForm" ng-submit="login.submit()" novalidate>
+    <form name="login.loginForm" ng-submit="login.submit()" class="form" novalidate>
       <div>
         <label for="email">Email</label>
         <input type="email" name="email" id="email" ng-model="login.credentials.email" required>
-        <div ng-messages="login.loginForm.email.$error" role="alert" ng-show="(login.loginForm.$submitted || login.loginForm.email.$touched) && login.loginForm.email.$invalid" class="error">
+        <div ng-messages="login.loginForm.email.$error" class="form-validation" ng-show="(login.loginForm.$submitted || login.loginForm.email.$touched) && login.loginForm.email.$invalid">
           <div ng-message="required">Please enter a value for this field.</div>
           <div ng-message="email">This field must be a valid email address.</div>
         </div>
@@ -13,13 +13,13 @@
       <div>
         <label for="password">Password</label>
         <input type="password" name="password" id="password" ng-model="login.credentials.password" required>
-        <div ng-messages="login.loginForm.password.$error" role="alert" ng-show="(login.loginForm.$submitted || login.loginForm.password.$touched) && login.loginForm.password.$invalid" class="error">
+        <div ng-messages="login.loginForm.password.$error" class="form-validation" ng-show="(login.loginForm.$submitted || login.loginForm.password.$touched) && login.loginForm.password.$invalid">
           <div ng-message="required">Please enter a value for this field.</div>
         </div>
       </div>
 
       <button class="button">Login</button>
     </form>
-    <button class="button" ng-click="login.authenticate('spotify')">Sign in with Spotify</button>
+    <button class="button button--full spotify" ng-click="login.authenticate('spotify')">Sign in with Spotify</button>
   </div>
 </div>

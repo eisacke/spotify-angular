@@ -1,8 +1,8 @@
 <h1>{{ usersShow.user.username }}</h1>
 
 <div class="gap">
-  <button ng-click="usersShow.formVisible = !usersShow.formVisible" class="button">Create playlist</button>
-  <button ng-click="usersShow.usersDelete()" class="button">Delete Account</button>
+  <button ng-click="usersShow.formVisible = !usersShow.formVisible" class="button" ng-if="usersShow.user.id === main.currentUserId && usersShow.user.spotifyId">Create playlist</button>
+  <button ng-click="usersShow.usersDelete()" class="button" ng-if="usersShow.user.id === main.currentUserId">Delete Account</button>
 </div>
 
 <div class="gap" ng-show="usersShow.formVisible">
@@ -12,7 +12,7 @@
   </form>
 </div>
 
-<div class="list">
+<div class="list" ng-if="usersShow.playlists">
   <ul>
     <li ng-repeat="playlist in usersShow.playlists" ng-if="usersShow.user.spotifyId == playlist.owner.id">
       {{ playlist.name }}

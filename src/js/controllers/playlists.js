@@ -18,7 +18,6 @@ function PlaylistsShowCtrl(User, $state, $http) {
       .get(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}`)
       .then((response) => {
         vm.playlist = response.data;
-        console.log(vm.playlist);
       });
   }
 
@@ -34,7 +33,7 @@ function PlaylistsShowCtrl(User, $state, $http) {
 
   function addTrack(track) {
     $http
-      .post(`/api/spotify/playlists/${$state.params.playlistId}/tracks/${track.uri}`)
+      .post(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}/tracks`, { track: track.uri })
       .then(() => {
         getPlaylist();
       });

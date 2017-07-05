@@ -37,8 +37,7 @@ function getPlaylists(req, res, next) {
     method: 'POST',
     url: 'https://accounts.spotify.com/api/token',
     form: {
-      grant_type: 'refresh_token',
-      refresh_token: config.spotify.refreshToken,
+      grant_type: 'client_credentials',
       client_id: config.spotify.clientId,
       client_secret: config.spotify.clientSecret
     },
@@ -47,7 +46,7 @@ function getPlaylists(req, res, next) {
     config.spotify.accessToken = token.access_token;
     return rp({
       method: 'GET',
-      url: 'https://api.spotify.com/v1/me/playlists',
+      url: `https://api.spotify.com/v1/users/${req.query.spotifyId}/playlists`,
       headers: {
         'Authorization': `Bearer ${config.spotify.accessToken}`
       },
@@ -64,8 +63,7 @@ function getPlaylist(req, res, next) {
     method: 'POST',
     url: 'https://accounts.spotify.com/api/token',
     form: {
-      grant_type: 'refresh_token',
-      refresh_token: config.spotify.refreshToken,
+      grant_type: 'client_credentials',
       client_id: config.spotify.clientId,
       client_secret: config.spotify.clientSecret
     },
@@ -101,13 +99,13 @@ function addTrack(req, res, next) {
     config.spotify.accessToken = token.access_token;
     return rp({
       method: 'POST',
-      url: `https://api.spotify.com/v1/users/${req.user.spotifyId}/playlists/${req.params.id}/tracks`,
+      url: `https://api.spotify.com/v1/users/${req.params.id}/playlists/${req.params.playlistId}/tracks`,
       headers: {
         'Authorization': `Bearer ${token.access_token}`,
         'Content-Type': 'application/json'
       },
       body: {
-        uris: [req.params.trackId]
+        uris: [req.body.track]
       },
       json: true
     });
@@ -122,8 +120,7 @@ function searchTracks(req, res, next) {
     method: 'POST',
     url: 'https://accounts.spotify.com/api/token',
     form: {
-      grant_type: 'refresh_token',
-      refresh_token: config.spotify.refreshToken,
+      grant_type: 'client_credentials',
       client_id: config.spotify.clientId,
       client_secret: config.spotify.clientSecret
     },

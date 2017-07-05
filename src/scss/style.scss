@@ -78,7 +78,44 @@ input {
   vertical-align: middle;
   i {
     color: white;
+    cursor: pointer;
   }
+}
+
+.form {
+  label {
+    @extend .heading;
+    font-size: 12px;
+    color: white;
+  }
+  input, button {
+    width: 100%;
+    @extend .gap--small;
+  }
+}
+
+.form-validation {
+  color: white;
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 4px;
+  @extend .gap--small;
+}
+
+.spotify {
+  border-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: $brand;
+  &:hover {
+    border-color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 1);
+  }
+}
+
+.button--full {
+  width: 100%;
+  display: block;
 }
 
 @import 'partials/messages';

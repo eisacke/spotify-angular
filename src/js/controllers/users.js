@@ -13,7 +13,12 @@ function UsersIndexCtrl(User) {
 UsersShowCtrl.$inject = ['User', '$state', '$http'];
 function UsersShowCtrl(User, $state, $http) {
   const vm = this;
-  vm.user = User.get($state.params);
+  User.get($state.params)
+    .$promise
+    .then((user) => {
+      vm.user = user;
+      if(vm.user.spotifyId) getPlaylists();
+    });
 
   function usersDelete() {
     vm.user
@@ -25,7 +30,7 @@ function UsersShowCtrl(User, $state, $http) {
 
   function createPlaylist() {
     $http
-      .post('/api/spotify/playlists', { name: vm.playlist.name })
+      .post(`/api/users/${vm.user.id}/playlists`, { name: vm.playlist.name })
       .then((response) => {
         vm.playlists.push(response.data);
         vm.playlist = {};
@@ -35,13 +40,11 @@ function UsersShowCtrl(User, $state, $http) {
 
   function getPlaylists() {
     $http
-      .get('/api/spotify/playlists')
+      .get(`/api/users/${vm.user.id}/playlists`, { params: { spotifyId: vm.user.spotifyId }})
       .then((response) => {
         vm.playlists = response.data.items;
       });
   }
-
-  getPlaylists();
 
   vm.createPlaylist = createPlaylist;
 }

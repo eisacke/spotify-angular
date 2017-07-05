@@ -32,16 +32,16 @@ router.route('/oauth/spotify')
 router.route('/users/:id/playlists/:playlistId')
   .get(secureRoute, spotify.getPlaylist);
 
-router.route('/spotify/playlists')
+router.route('/users/:id/playlists')
   .get(secureRoute, spotify.getPlaylists);
 
 router.route('/spotify/search')
   .get(secureRoute, spotify.searchTracks);
 
-router.route('/spotify/playlists')
+router.route('/users/:id/playlists')
   .post(secureRoute, spotify.createPlaylist);
 
-router.route('/spotify/playlists/:id/tracks/:trackId')
+router.route('/users/:id/playlists/:playlistId/tracks')
   .post(secureRoute, spotify.addTrack);
 
 router.all('/*', (req, res) => res.notFound());
