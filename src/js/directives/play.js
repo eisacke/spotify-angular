@@ -10,8 +10,8 @@ function play() {
     scope: {
       track: '='
     },
-    link: function(scope, element) {
-      const audio = element[0].querySelector('audio');
+    link: function(scope) {
+      const audio = new Audio();
       audio.src = scope.track;
 
       scope.playTrack = function() {
