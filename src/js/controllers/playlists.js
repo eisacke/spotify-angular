@@ -5,8 +5,8 @@ angular
 PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http', 'socket', '$auth', '$scope'];
 function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, socket, $auth, $scope) {
   const vm = this;
-  let currentSongIndex = 0;
-  let currentSong = null;
+  let currentSongTimeout = null;
+  let currentSongInterval = null;
 
   if($auth.getPayload()) vm.currentUserId = $auth.getPayload().userId;
 
@@ -34,7 +34,6 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
       .get(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}`)
       .then((response) => {
         vm.playlist = response.data;
-        console.log(vm.playlist);
       });
   }
 
@@ -93,6 +92,8 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
           vm.populatedSuggestions[i].upvotes = vm.suggestions[i].upvotes;
           vm.populatedSuggestions[i].createdBy = vm.suggestions[i].createdBy;
         }
+
+        findMostUpvotes();
       });
   }
 
@@ -139,36 +140,76 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
         } else {
           suggestion.upvotes.push(vm.currentUserId);
         }
-        socket.emit('voted:suggestion', suggestion);
+        socket.emit('voted:suggestion');
       });
   }
 
   vm.upvoteSuggestion = upvoteSuggestion;
 
   function playPlaylist() {
-    console.log(vm.playlist.uri);
     $http
       .put('/api/spotify/playlist', { playlist: vm.playlist.uri })
       .then(() => {
-        currentSongIndex = 0;
-        startTimer();
+        startTimer(0);
       });
   }
 
-  function startTimer() {
-    vm.currentSong = vm.playlist.tracks.items[currentSongIndex];
+  function msToTime(duration) {
+    let seconds = parseInt((duration/1000)%60);
+    let minutes = parseInt((duration/(1000*60))%60);
+    let hours = parseInt((duration/(1000*60*60))%24);
+
+    hours = (hours < 10) ? '0' + hours : hours;
+    minutes = (minutes < 10) ? '0' + minutes : minutes;
+    seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+    return hours + ':' + minutes + ':' + seconds;
+  }
+
+  function findMostUpvotes() {
+    return vm.populatedSuggestions.reduce((acc, suggestion) => {
+      return acc.upvotes.length > suggestion.upvotes.length ? acc : suggestion;
+    });
+  }
+
+  function startCountdownTimer(seconds) {
+    vm.countdownMessage = `Adding next song in ${seconds} seconds`;
 
     const intervalId = setInterval(() => {
-      console.log('hi');
-      $scope.$apply();
+      seconds--;
+      vm.countdownMessage = `Adding next song in ${seconds} seconds`;
     }, 1000);
 
-    let timeoutId = setTimeout(() => {
+    setTimeout(() => {
       clearInterval(intervalId);
-      console.log('song finished!');
-      currentSongIndex++;
-      if(currentSongIndex < vm.playlist.tracks.items.length) {
-        startTimer();
+      vm.countdownMessage = null;
+      const trackToAdd = findMostUpvotes();
+      if(trackToAdd) addTrack(trackToAdd);
+    }, seconds*1000);
+  }
+
+  function startTimer(index) {
+    if(currentSongTimeout) clearTimeout(currentSongTimeout);
+    if(currentSongInterval) clearInterval(currentSongInterval);
+    vm.currentSong = vm.playlist.tracks.items[index];
+    socket.emit('currently:playing', vm.currentSong);
+    let milliseconds = vm.currentSong.track.duration_ms;
+
+    currentSongInterval = setInterval(() => {
+      milliseconds = milliseconds - 1000;
+      const time = msToTime(milliseconds);
+      console.log(time);
+      $scope.$apply();
+      if(isLastSong() && Math.floor(milliseconds/1000) === 30) {
+        startCountdownTimer(10);
+      }
+    }, 1000);
+
+    currentSongTimeout = setTimeout(() => {
+      clearInterval(currentSongInterval);
+      index++;
+      if(index < vm.playlist.tracks.items.length) {
+        startTimer(index);
       } else {
         vm.currentSong = null;
         $scope.$apply();
@@ -176,11 +217,18 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
     }, vm.currentSong.track.duration_ms);
   }
 
+  function isLastSong(index) {
+    return index === vm.playlist.tracks.items.length - 1;
+  }
+
   vm.playPlaylist = playPlaylist;
 
   function playPlaylistTrack(index) {
     $http
-      .put('/api/spotify/playlist/track', { playlist: vm.playlist.uri, position: index });
+      .put('/api/spotify/playlist/track', { playlist: vm.playlist.uri, position: index })
+      .then(() => {
+        startTimer(index);
+      });
   }
 
   vm.playPlaylistTrack = playPlaylistTrack;
@@ -202,7 +250,11 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
     getPlaylist();
   });
 
-  socket.on('voted:suggestion', function(suggestion) {
+  socket.on('voted:suggestion', function() {
     getSuggestions();
+  });
+
+  socket.on('currently:playing', function(currentSong) {
+    vm.currentSong = currentSong;
   });
 }

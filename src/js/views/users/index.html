@@ -1,8 +1,10 @@
 <div class="row">
   <div class="col-12">
     <h1>Users</h1>
-  </div>
-  <div class="col-md-6" ng-repeat="user in usersIndex.all">
-    <a ui-sref="usersShow({ id: user.id })">{{ user.username }}</a>
+    <a ui-sref="usersShow({ id: user.id })" ng-repeat="user in usersIndex.all">
+      <div class="list gap--small">
+        <i class="fa fa-user" aria-hidden="true"></i> {{ user.username }}
+      </div>
+    </a>
   </div>
 </div>

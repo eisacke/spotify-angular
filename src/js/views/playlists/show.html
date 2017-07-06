@@ -35,14 +35,18 @@
   </div>
   <div class="col-md-6">
     <div class="gap">
-      <h1>{{ playlistsShow.playlist.name }}</h1><a class="button button--small" href="{{ playlistsShow.playlist.external_urls.spotify }}" target="_blank">Open on Spotify</a> <button class="button button--small" ng-if="playlistsShow.user.id === main.currentUserId" ng-click="playlistsShow.deletePlaylist(playlist)">Delete from Voter</button>
+      <h1>{{ playlistsShow.playlist.name }}</h1>
+      <a class="button button--small" href="{{ playlistsShow.playlist.external_urls.spotify }}" target="_blank">Open on Spotify</a>
+      <button class="button button--small" ng-if="playlistsShow.user.id === main.currentUserId" ng-click="playlistsShow.deletePlaylist(playlist)">Delete from Voter</button>
       <button class="button button--small" ng-click="playlistsShow.playPlaylist()" ng-if="playlistsShow.user.id === main.currentUserId">Play all</button>
     </div>
-    <ol class="tracks">
-      <li ng-repeat="item in playlistsShow.playlist.tracks.items" ng-class="{ current: item === playlistsShow.currentSong }">
+    <ol class="tracks gap">
+      <li ng-repeat="item in playlistsShow.playlist.tracks.items" ng-class="{ current: item.track.id === playlistsShow.currentSong.track.id }">
+        <i class="fa fa-volume-up" aria-hidden="true" ng-if="item.track.id === playlistsShow.currentSong.track.id"></i>
         {{ item.track.name }} by {{ item.track.artists[0].name }} <button class="button button--small" ng-click="playlistsShow.removeTrack(item)" ng-if="playlistsShow.user.id === main.currentUserId">Remove</button>
         <button class="button button--small" ng-if="playlistsShow.user.id === main.currentUserId" ng-click="playlistsShow.playPlaylistTrack($index)">Play</button>
       </li>
     </ol>
+    <p>{{ playlistsShow.countdownMessage }}</p>
   </div>
 </div>

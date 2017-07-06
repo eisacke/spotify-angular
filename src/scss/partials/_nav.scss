@@ -24,4 +24,34 @@ nav {
   .icon {
     cursor: pointer;
   }
+  @media only screen and (max-width: 767px) {
+    width: 100%;
+    height: auto;
+    padding: 20px 15px;
+    ul {
+      margin-bottom: 0;
+      li {
+        margin-bottom: 0;
+        font-size: 12px;
+        &:not(:first-of-type) {
+          float: left;
+          width: 25%;
+          text-align: center;
+        }
+        a {
+          &.active {
+            text-decoration: underline;
+          }
+          img {
+            width: 30px;
+            display: block;
+            margin: 0 auto 10px;
+          }
+        }
+      }
+    }
+    .icon {
+      display: none;
+    }
+  }
 }

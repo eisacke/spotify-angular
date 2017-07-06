@@ -32,8 +32,12 @@ module.exports = function (socket) {
     socket.broadcast.emit('removed:track');
   });
 
-  socket.on('voted:suggestion', function (suggestion) {
-    socket.broadcast.emit('voted:suggestion', suggestion);
+  socket.on('voted:suggestion', function () {
+    socket.broadcast.emit('voted:suggestion');
+  });
+
+  socket.on('currently:playing', function (currentSong) {
+    socket.broadcast.emit('currently:playing', currentSong);
   });
 
 };

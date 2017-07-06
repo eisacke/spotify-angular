@@ -15,6 +15,7 @@
 <div class="list" ng-if="usersShow.playlists.length">
   <ul>
     <li ng-repeat="playlist in usersShow.playlists">
+      <i class="fa fa-music" aria-hidden="true"></i>
       {{ playlist.name }}
       <a ui-sref="playlistsShow({ id: usersShow.user.id, playlistId: playlist.id })" class="button button--small">View</a>
     </li>
