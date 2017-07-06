@@ -42,7 +42,8 @@ router.route('/users/:id/playlists')
   .post(secureRoute, spotify.createPlaylist);
 
 router.route('/users/:id/playlists/:playlistId/tracks')
-  .post(secureRoute, spotify.addTrack);
+  .post(secureRoute, spotify.addTrack)
+  .put(secureRoute, spotify.removeTrack);
 
 router.all('/*', (req, res) => res.notFound());
 

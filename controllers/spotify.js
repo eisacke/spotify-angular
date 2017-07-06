@@ -115,6 +115,37 @@ function addTrack(req, res, next) {
   .catch(next);
 }
 
+function removeTrack(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: config.spotify.refreshToken,
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'DELETE',
+      url: `https://api.spotify.com/v1/users/${req.params.id}/playlists/${req.params.playlistId}/tracks`,
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        uris: [req.body.track]
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
 function searchTracks(req, res, next) {
   return rp({
     method: 'POST',
@@ -151,5 +182,6 @@ module.exports = {
   getPlaylists,
   getPlaylist,
   addTrack,
-  searchTracks
+  searchTracks,
+  removeTrack
 };

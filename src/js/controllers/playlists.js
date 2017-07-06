@@ -40,4 +40,15 @@ function PlaylistsShowCtrl(User, $state, $http) {
   }
 
   vm.addTrack = addTrack;
+
+  function removeTrack(item) {
+    console.log(item.track.uri);
+    $http
+      .put(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}/tracks`, { track: item.track.uri })
+      .then(() => {
+        getPlaylist();
+      });
+  }
+
+  vm.removeTrack = removeTrack;
 }

@@ -31,8 +31,8 @@ function UsersShowCtrl(User, $state, $http) {
   function createPlaylist() {
     $http
       .post(`/api/users/${vm.user.id}/playlists`, { name: vm.playlist.name })
-      .then((response) => {
-        vm.playlists.push(response.data);
+      .then(() => {
+        getPlaylists();
         vm.playlist = {};
         vm.formVisible = false;
       });
