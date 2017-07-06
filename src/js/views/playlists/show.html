@@ -4,15 +4,28 @@
       <input type="text" ng-model="playlistsShow.q">
       <button class="button">Search</button>
     </form>
-    <div class="list" ng-show="playlistsShow.results">
+    <div class="list gap" ng-show="playlistsShow.results">
       <ul>
         <li ng-repeat="track in playlistsShow.results">
           {{ track.name }} by {{ track.artists[0].name }}
           <play track="track.preview_url" ng-if="track.preview_url"></play>
           <button ng-click="playlistsShow.addTrack(track)" class="button button--small" ng-if="playlistsShow.user.id === main.currentUserId">Add</button>
+          <button ng-click="playlistsShow.addSuggestion(track)" class="button button--small">Suggest</button>
         </li>
       </ul>
     </div>
+
+    <h2>Suggestions</h2>
+    <div class="list">
+      <p ng-hide="playlistsShow.suggestions.length">No suggestions!</p>
+      <ul ng-show="playlistsShow.suggestions.length">
+        <li ng-repeat="track in playlistsShow.suggestions">
+          {{ track.spotifyId }} suggested by {{ track.createdBy.username }}
+          <button ng-click="playlistsShow.removeSuggestion(track)" class="button button--small">Delete</button>
+        </li>
+      </ul>
+    </div>
+
   </div>
   <div class="col-md-6">
     <div class="gap">

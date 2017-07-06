@@ -17,7 +17,8 @@ function createRoute(req, res, next) {
 
 function showRoute(req, res, next) {
   Playlist
-    .findById(req.params.id)
+    .findOne({ spotifyId: req.params.id })
+    .populate('suggestions.createdBy')
     .exec()
     .then((playlist) => {
       if(!playlist) return res.notFound();
@@ -29,7 +30,7 @@ function showRoute(req, res, next) {
 
 function updateRoute(req, res, next) {
   Playlist
-    .findById(req.params.id)
+    .findOne({ spotifyId: req.params.id })
     .exec()
     .then((playlist) => {
       if(!playlist) return res.notFound();
@@ -63,13 +64,12 @@ function addSuggestionRoute(req, res, next) {
   req.body.createdBy = req.user;
 
   Playlist
-    .findById(req.params.id)
+    .findOne({ spotifyId: req.params.id })
     .exec()
     .then((playlist) => {
       if(!playlist) return res.notFound();
-
       const suggestion = playlist.suggestions.create(req.body);
-      playlist.suggestions.push(suggestion);
+      playlist.suggestions.push(req.body);
 
       return playlist.save()
         .then(() => res.json(suggestion));
@@ -79,7 +79,7 @@ function addSuggestionRoute(req, res, next) {
 
 function deleteSuggestionRoute(req, res, next) {
   Playlist
-    .findById(req.params.id)
+    .findOne({ spotifyId: req.params.id })
     .exec()
     .then((playlist) => {
       if(!playlist) return res.notFound();

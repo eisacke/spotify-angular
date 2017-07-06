@@ -2,8 +2,8 @@ angular
   .module('spotifyApp')
   .controller('PlaylistsShowCtrl', PlaylistsShowCtrl);
 
-PlaylistsShowCtrl.$inject = ['User', 'Playlist', '$state', '$http'];
-function PlaylistsShowCtrl(User, Playlist, $state, $http) {
+PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http'];
+function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
   const vm = this;
 
   User
@@ -12,7 +12,15 @@ function PlaylistsShowCtrl(User, Playlist, $state, $http) {
     .then((user) => {
       vm.user = user;
       getPlaylist();
+      getSuggestions();
     });
+
+  function getSuggestions() {
+    Playlist
+      .get({ id: $state.params.playlistId })
+      .$promise
+      .then(playlist => vm.suggestions = playlist.suggestions);
+  }
 
   function getPlaylist() {
     $http
@@ -43,7 +51,6 @@ function PlaylistsShowCtrl(User, Playlist, $state, $http) {
   vm.addTrack = addTrack;
 
   function removeTrack(item) {
-    console.log(item.track.uri);
     $http
       .put(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}/tracks`, { track: item.track.uri })
       .then(() => {
@@ -63,4 +70,26 @@ function PlaylistsShowCtrl(User, Playlist, $state, $http) {
   }
 
   vm.deletePlaylist = deletePlaylist;
+
+  function addSuggestion(track) {
+    PlaylistSuggestion
+      .save({ playlistId: vm.playlist.id }, { spotifyId: track.id })
+      .$promise
+      .then(() => {
+        getSuggestions();
+      });
+  }
+
+  vm.addSuggestion = addSuggestion;
+
+  function removeSuggestion(suggestion) {
+    PlaylistSuggestion
+      .delete({ playlistId: vm.playlist.id, id: suggestion.id })
+      .$promise
+      .then(() => {
+        getSuggestions();
+      });
+  }
+
+  vm.removeSuggestion = removeSuggestion;
 }

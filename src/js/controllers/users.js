@@ -53,7 +53,7 @@ function UsersShowCtrl(User, Playlist, $state, $http) {
       .$promise
       .then((playlists) => {
         vm.playlists = spotifyPlaylists.filter((playlist) => {
-          return playlists.some(userPlaylist =>  userPlaylist.spotifyId === playlist.id);
+          return playlists.find(userPlaylist =>  userPlaylist.spotifyId === playlist.id);
         });
       });
   }
