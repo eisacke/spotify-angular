@@ -25,6 +25,8 @@
           <li ng-if="main.isAuthenticated()"><a ui-sref-active="active" ui-sref="messagesIndex">Messages</a></li>
           <li ng-if="main.isAuthenticated()"><a ng-click="main.logout()">Logout</a></li>
         </ul>
+        <i class="fa fa-play icon" aria-hidden="true" ng-click="main.resume()" ng-if="main.currentUser.spotifyId"></i>
+        <i class="fa fa-pause icon" aria-hidden="true" ng-click="main.pause()" ng-if="main.currentUser.spotifyId"></i>
       </nav>
     </header>
     <div ng-if="main.message" class="container-fluid message">

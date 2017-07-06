@@ -58,6 +58,18 @@ router.route('/spotify/search')
 router.route('/spotify/tracks')
   .get(secureRoute, spotify.getTracks);
 
+router.route('/spotify/pause')
+  .put(secureRoute, spotify.pause);
+
+router.route('/spotify/resume')
+  .put(secureRoute, spotify.resume);
+
+router.route('/spotify/playlist')
+  .put(secureRoute, spotify.playPlaylist);
+
+router.route('/spotify/playlist/track')
+  .put(secureRoute, spotify.playPlaylistTrack);
+
 router.route('/users/:id/playlists')
   .post(secureRoute, spotify.createPlaylist);
 

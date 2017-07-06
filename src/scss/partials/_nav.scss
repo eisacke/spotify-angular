@@ -6,6 +6,7 @@ nav {
   text-align: center;
   padding: 50px 15px;
   ul {
+    @extend .gap;
     li {
       margin-bottom: 10px;
       a {
@@ -19,5 +20,8 @@ nav {
         }
       }
     }
+  }
+  .icon {
+    cursor: pointer;
   }
 }

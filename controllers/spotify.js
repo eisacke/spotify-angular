@@ -210,6 +210,123 @@ function searchTracks(req, res, next) {
   .catch(next);
 }
 
+function playPlaylist(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: config.spotify.refreshToken,
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'PUT',
+      url: 'https://api.spotify.com/v1/me/player/play',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        context_uri: req.body.playlist
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
+function playPlaylistTrack(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: config.spotify.refreshToken,
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'PUT',
+      url: 'https://api.spotify.com/v1/me/player/play',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json'
+      },
+      body: {
+        context_uri: req.body.playlist,
+        offset: { position: req.body.position }
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
+function pause(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: config.spotify.refreshToken,
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'PUT',
+      url: 'https://api.spotify.com/v1/me/player/pause',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
+function resume(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: config.spotify.refreshToken,
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'PUT',
+      url: 'https://api.spotify.com/v1/me/player/play',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
 module.exports = {
   createPlaylist,
   getPlaylists,
@@ -217,5 +334,9 @@ module.exports = {
   addTrack,
   getTracks,
   searchTracks,
-  removeTrack
+  removeTrack,
+  playPlaylist,
+  playPlaylistTrack,
+  pause,
+  resume
 };

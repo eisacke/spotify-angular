@@ -142,6 +142,22 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
 
   vm.upvoteSuggestion = upvoteSuggestion;
 
+  function playPlaylist() {
+    console.log(vm.playlist.uri);
+    $http
+      .put('/api/spotify/playlist', { playlist: vm.playlist.uri })
+      .then((response) => console.log(response));
+  }
+
+  vm.playPlaylist = playPlaylist;
+
+  function playPlaylistTrack(index) {
+    $http
+      .put('/api/spotify/playlist/track', { playlist: vm.playlist.uri, position: index });
+  }
+
+  vm.playPlaylistTrack = playPlaylistTrack;
+
   // SOCKETS
   socket.on('added:suggestion', function () {
     getSuggestions();

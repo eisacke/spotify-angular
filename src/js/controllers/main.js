@@ -2,8 +2,8 @@ angular
   .module('spotifyApp')
   .controller('MainCtrl', MainCtrl);
 
-MainCtrl.$inject = ['$rootScope', '$state', '$auth', '$transitions'];
-function MainCtrl($rootScope, $state, $auth, $transitions) {
+MainCtrl.$inject = ['$rootScope', '$state', '$auth', '$transitions', 'User', '$http'];
+function MainCtrl($rootScope, $state, $auth, $transitions, User, $http) {
   const vm = this;
   vm.navIsOpen = false;
 
@@ -22,7 +22,10 @@ function MainCtrl($rootScope, $state, $auth, $transitions) {
     vm.pageName = transition.$to().name; // Storing the current state name as a string
     if(vm.stateHasChanged) vm.message = null;
     if(!vm.stateHasChanged) vm.stateHasChanged = true;
-    if($auth.getPayload()) vm.currentUserId = $auth.getPayload().userId;
+    if($auth.getPayload()) {
+      vm.currentUserId = $auth.getPayload().userId;
+      vm.currentUser = User.get({ id: vm.currentUserId });
+    }
   });
 
   function logout() {
@@ -31,4 +34,18 @@ function MainCtrl($rootScope, $state, $auth, $transitions) {
   }
 
   vm.logout = logout;
+
+  function pause() {
+    $http
+      .put('/api/spotify/pause');
+  }
+
+  vm.pause = pause;
+
+  function resume() {
+    $http
+      .put('/api/spotify/resume');
+  }
+
+  vm.resume = resume;
 }

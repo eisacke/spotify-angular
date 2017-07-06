@@ -14,7 +14,7 @@ function Auth($authProvider) {
     redirectUri: 'http://localhost:4000',
     optionalUrlParams: ['state'],
     requiredUrlParams: ['scope'],
-    scope: ['user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private'],
+    scope: ['user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private user-modify-playback-state'],
     scopePrefix: '',
     scopeDelimiter: ',',
     oauthType: '2.0',
