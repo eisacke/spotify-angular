@@ -54,6 +54,9 @@ router.route('/users/:id/playlists')
 router.route('/spotify/search')
   .get(secureRoute, spotify.searchTracks);
 
+router.route('/spotify/tracks')
+  .get(secureRoute, spotify.getTracks);
+
 router.route('/users/:id/playlists')
   .post(secureRoute, spotify.createPlaylist);
 

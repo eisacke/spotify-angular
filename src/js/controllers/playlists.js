@@ -19,7 +19,10 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
     Playlist
       .get({ id: $state.params.playlistId })
       .$promise
-      .then(playlist => vm.suggestions = playlist.suggestions);
+      .then((playlist) => {
+        vm.suggestions = playlist.suggestions;
+        if(vm.suggestions.length) populateSuggestions();
+      });
   }
 
   function getPlaylist() {
@@ -44,6 +47,7 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
     $http
       .post(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}/tracks`, { track: track.uri })
       .then(() => {
+        removeSuggestion(track);
         getPlaylist();
       });
   }
@@ -70,6 +74,20 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
   }
 
   vm.deletePlaylist = deletePlaylist;
+
+  function populateSuggestions() {
+    const trackIds = vm.suggestions.map(sugestion => sugestion.spotifyId).join(',');
+    $http
+      .get('/api/spotify/tracks', { params: { trackIds } })
+      .then((response) => {
+        console.log(response);
+        vm.populatedSuggestions = response.data.tracks;
+        for(let i = 0; i < vm.suggestions.length; i++) {
+          vm.populatedSuggestions[i].id = vm.suggestions[i].id;
+          vm.populatedSuggestions[i].createdBy = vm.suggestions[i].createdBy;
+        }
+      });
+  }
 
   function addSuggestion(track) {
     PlaylistSuggestion

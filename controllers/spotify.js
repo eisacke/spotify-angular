@@ -88,6 +88,35 @@ function getPlaylist(req, res, next) {
   .catch(next);
 }
 
+function getTracks(req, res, next) {
+  return rp({
+    method: 'POST',
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      grant_type: 'client_credentials',
+      client_id: config.spotify.clientId,
+      client_secret: config.spotify.clientSecret
+    },
+    json: true
+  }).then((token) => {
+    config.spotify.accessToken = token.access_token;
+    return rp({
+      method: 'GET',
+      url: 'https://api.spotify.com/v1/tracks',
+      qs: {
+        ids: req.query.trackIds
+      },
+      headers: {
+        'Authorization': `Bearer ${config.spotify.accessToken}`
+      },
+      json: true
+    });
+  }).then((response) => {
+    res.json(response);
+  })
+  .catch(next);
+}
+
 function addTrack(req, res, next) {
   return rp({
     method: 'POST',
@@ -186,6 +215,7 @@ module.exports = {
   getPlaylists,
   getPlaylist,
   addTrack,
+  getTracks,
   searchTracks,
   removeTrack
 };
