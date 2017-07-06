@@ -2,9 +2,11 @@ angular
   .module('spotifyApp')
   .controller('PlaylistsShowCtrl', PlaylistsShowCtrl);
 
-PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http', 'socket', '$auth'];
-function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, socket, $auth) {
+PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http', 'socket', '$auth', '$scope'];
+function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, socket, $auth, $scope) {
   const vm = this;
+  let currentSongIndex = 0;
+  let currentSong = null;
 
   if($auth.getPayload()) vm.currentUserId = $auth.getPayload().userId;
 
@@ -32,6 +34,7 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
       .get(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}`)
       .then((response) => {
         vm.playlist = response.data;
+        console.log(vm.playlist);
       });
   }
 
@@ -146,7 +149,31 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, so
     console.log(vm.playlist.uri);
     $http
       .put('/api/spotify/playlist', { playlist: vm.playlist.uri })
-      .then((response) => console.log(response));
+      .then(() => {
+        currentSongIndex = 0;
+        startTimer();
+      });
+  }
+
+  function startTimer() {
+    vm.currentSong = vm.playlist.tracks.items[currentSongIndex];
+
+    const intervalId = setInterval(() => {
+      console.log('hi');
+      $scope.$apply();
+    }, 1000);
+
+    let timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+      console.log('song finished!');
+      currentSongIndex++;
+      if(currentSongIndex < vm.playlist.tracks.items.length) {
+        startTimer();
+      } else {
+        vm.currentSong = null;
+        $scope.$apply();
+      }
+    }, vm.currentSong.track.duration_ms);
   }
 
   vm.playPlaylist = playPlaylist;

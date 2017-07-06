@@ -9,6 +9,9 @@
 @import 'partials/typography';
 @import 'partials/buttons';
 
+.current {
+  font-weight: 700;
+}
 
 body {
   background: #ff6e7f;  /* fallback for old browsers */

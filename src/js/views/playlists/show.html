@@ -39,7 +39,7 @@
       <button class="button button--small" ng-click="playlistsShow.playPlaylist()" ng-if="playlistsShow.user.id === main.currentUserId">Play all</button>
     </div>
     <ol class="tracks">
-      <li ng-repeat="item in playlistsShow.playlist.tracks.items">
+      <li ng-repeat="item in playlistsShow.playlist.tracks.items" ng-class="{ current: item === playlistsShow.currentSong }">
         {{ item.track.name }} by {{ item.track.artists[0].name }} <button class="button button--small" ng-click="playlistsShow.removeTrack(item)" ng-if="playlistsShow.user.id === main.currentUserId">Remove</button>
         <button class="button button--small" ng-if="playlistsShow.user.id === main.currentUserId" ng-click="playlistsShow.playPlaylistTrack($index)">Play</button>
       </li>
