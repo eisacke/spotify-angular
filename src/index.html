@@ -27,8 +27,12 @@
         </ul>
       </nav>
     </header>
-    <div ng-if="main.message">
-      {{ main.message }}
+    <div ng-if="main.message" class="container-fluid message">
+      <div class="row">
+        <div class="col-12">
+          {{ main.message }}
+        </div>
+      </div>
     </div>
     <main>
       <div class="container-fluid" ui-view></div>

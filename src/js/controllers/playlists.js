@@ -2,9 +2,10 @@ angular
   .module('spotifyApp')
   .controller('PlaylistsShowCtrl', PlaylistsShowCtrl);
 
-PlaylistsShowCtrl.$inject = ['User', '$state', '$http'];
-function PlaylistsShowCtrl(User, $state, $http) {
+PlaylistsShowCtrl.$inject = ['User', 'Playlist', '$state', '$http'];
+function PlaylistsShowCtrl(User, Playlist, $state, $http) {
   const vm = this;
+
   User
     .get($state.params)
     .$promise
@@ -51,4 +52,15 @@ function PlaylistsShowCtrl(User, $state, $http) {
   }
 
   vm.removeTrack = removeTrack;
+
+  function deletePlaylist() {
+    Playlist
+      .delete({ id: vm.playlist.id })
+      .$promise
+      .then(() => {
+        console.log('here');
+      });
+  }
+
+  vm.deletePlaylist = deletePlaylist;
 }

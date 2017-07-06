@@ -12,9 +12,9 @@
   </form>
 </div>
 
-<div class="list" ng-if="usersShow.playlists">
+<div class="list" ng-if="usersShow.playlists.length">
   <ul>
-    <li ng-repeat="playlist in usersShow.playlists" ng-if="usersShow.user.spotifyId == playlist.owner.id">
+    <li ng-repeat="playlist in usersShow.playlists">
       {{ playlist.name }}
       <a ui-sref="playlistsShow({ id: usersShow.user.id, playlistId: playlist.id })" class="button button--small">View</a>
     </li>

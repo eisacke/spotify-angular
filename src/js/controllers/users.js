@@ -10,8 +10,8 @@ function UsersIndexCtrl(User) {
   vm.all = User.query();
 }
 
-UsersShowCtrl.$inject = ['User', '$state', '$http'];
-function UsersShowCtrl(User, $state, $http) {
+UsersShowCtrl.$inject = ['User', 'Playlist', '$state', '$http'];
+function UsersShowCtrl(User, Playlist, $state, $http) {
   const vm = this;
   User.get($state.params)
     .$promise
@@ -42,7 +42,19 @@ function UsersShowCtrl(User, $state, $http) {
     $http
       .get(`/api/users/${vm.user.id}/playlists`, { params: { spotifyId: vm.user.spotifyId }})
       .then((response) => {
-        vm.playlists = response.data.items;
+        const spotifyPlaylists = response.data.items;
+        filterPlaylists(spotifyPlaylists);
+      });
+  }
+
+  function filterPlaylists(spotifyPlaylists) {
+    Playlist
+      .query({ createdBy: vm.user.id })
+      .$promise
+      .then((playlists) => {
+        vm.playlists = spotifyPlaylists.filter((playlist) => {
+          return playlists.some(userPlaylist =>  userPlaylist.spotifyId === playlist.id);
+        });
       });
   }
 

@@ -10,4 +10,19 @@
     font-size: 8px;
     padding: 4px 8px;
   }
+  &--full {
+    width: 100%;
+    display: block;
+  }
+}
+
+.spotify {
+  border-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: $brand;
+  &:hover,
+  &:focus {
+    border-color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 1);
+  }
 }

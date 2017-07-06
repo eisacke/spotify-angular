@@ -1,5 +1,6 @@
 const rp = require('request-promise');
 const config = require('../config/oauth');
+const Playlist = require('../models/playlist');
 
 function createPlaylist(req, res, next) {
   return rp({
@@ -27,7 +28,10 @@ function createPlaylist(req, res, next) {
       json: true
     });
   }).then((response) => {
-    res.json(response);
+    const playlist = { spotifyId: response.id, createdBy: req.user };
+    return Playlist.create(playlist);
+  }).then((playlist) => {
+    res.json(playlist);
   })
   .catch(next);
 }

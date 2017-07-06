@@ -27,6 +27,17 @@ input {
   @extend .input-styles;
 }
 
+.message {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  @extend .gap;
+}
+
 .new-message {
   overflow: hidden;
   input {
@@ -101,21 +112,6 @@ input {
   padding: 6px 12px;
   border-radius: 4px;
   @extend .gap--small;
-}
-
-.spotify {
-  border-color: rgba(255, 255, 255, 0.9);
-  background-color: rgba(255, 255, 255, 0.9);
-  color: $brand;
-  &:hover {
-    border-color: rgba(255, 255, 255, 1);
-    background-color: rgba(255, 255, 255, 1);
-  }
-}
-
-.button--full {
-  width: 100%;
-  display: block;
 }
 
 @import 'partials/messages';
