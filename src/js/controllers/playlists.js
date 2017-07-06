@@ -2,9 +2,11 @@ angular
   .module('spotifyApp')
   .controller('PlaylistsShowCtrl', PlaylistsShowCtrl);
 
-PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http'];
-function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
+PlaylistsShowCtrl.$inject = ['User', 'Playlist', 'PlaylistSuggestion', '$state', '$http', 'socket', '$auth'];
+function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http, socket, $auth) {
   const vm = this;
+
+  if($auth.getPayload()) vm.currentUserId = $auth.getPayload().userId;
 
   User
     .get($state.params)
@@ -49,6 +51,7 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
       .then(() => {
         removeSuggestion(track);
         getPlaylist();
+        socket.emit('added:track');
       });
   }
 
@@ -59,6 +62,7 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
       .put(`/api/users/${vm.user.spotifyId}/playlists/${$state.params.playlistId}/tracks`, { track: item.track.uri })
       .then(() => {
         getPlaylist();
+        socket.emit('removed:track');
       });
   }
 
@@ -80,10 +84,10 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
     $http
       .get('/api/spotify/tracks', { params: { trackIds } })
       .then((response) => {
-        console.log(response);
         vm.populatedSuggestions = response.data.tracks;
         for(let i = 0; i < vm.suggestions.length; i++) {
           vm.populatedSuggestions[i].id = vm.suggestions[i].id;
+          vm.populatedSuggestions[i].upvotes = vm.suggestions[i].upvotes;
           vm.populatedSuggestions[i].createdBy = vm.suggestions[i].createdBy;
         }
       });
@@ -94,11 +98,20 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
       .save({ playlistId: vm.playlist.id }, { spotifyId: track.id })
       .$promise
       .then(() => {
+        vm.q = '';
+        vm.results = [];
         getSuggestions();
+        socket.emit('added:suggestion');
       });
   }
 
   vm.addSuggestion = addSuggestion;
+
+  function hasUpvoted(suggestion) {
+    return suggestion.upvotes.includes(vm.currentUserId);
+  }
+
+  vm.hasUpvoted = hasUpvoted;
 
   function removeSuggestion(suggestion) {
     PlaylistSuggestion
@@ -106,8 +119,47 @@ function PlaylistsShowCtrl(User, Playlist, PlaylistSuggestion, $state, $http) {
       .$promise
       .then(() => {
         getSuggestions();
+        socket.emit('removed:suggestion');
       });
   }
 
   vm.removeSuggestion = removeSuggestion;
+
+  function upvoteSuggestion(suggestion) {
+    PlaylistSuggestion
+      .update({ playlistId: vm.playlist.id, id: suggestion.id })
+      .$promise
+      .then(() => {
+        const index = suggestion.upvotes.indexOf(vm.currentUserId);
+        if (index > -1) {
+          suggestion.upvotes.splice(index, 1);
+        } else {
+          suggestion.upvotes.push(vm.currentUserId);
+        }
+        socket.emit('voted:suggestion', suggestion);
+      });
+  }
+
+  vm.upvoteSuggestion = upvoteSuggestion;
+
+  // SOCKETS
+  socket.on('added:suggestion', function () {
+    getSuggestions();
+  });
+
+  socket.on('removed:suggestion', function () {
+    getSuggestions();
+  });
+
+  socket.on('added:track', function () {
+    getPlaylist();
+  });
+
+  socket.on('removed:track', function () {
+    getPlaylist();
+  });
+
+  socket.on('voted:suggestion', function(suggestion) {
+    getSuggestions();
+  });
 }

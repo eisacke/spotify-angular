@@ -40,6 +40,7 @@ router.route('/playlists/:id/suggestions')
   .post(secureRoute, playlists.addSuggestion);
 
 router.route('/playlists/:id/suggestions/:suggestionId')
+  .put(secureRoute, playlists.upvoteSuggestion)
   .delete(secureRoute, playlists.deleteSuggestion);
 
 router.route('/oauth/spotify')

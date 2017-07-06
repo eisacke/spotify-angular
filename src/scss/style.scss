@@ -115,3 +115,9 @@ input {
 }
 
 @import 'partials/messages';
+
+@media only screen and (max-width: 767px) {
+  [class^="col-md"] {
+    margin-bottom: 20px;
+  }
+}

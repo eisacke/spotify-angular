@@ -13,6 +13,6 @@ function Playlist($resource) {
 PlaylistSuggestion.$inject = ['$resource'];
 function PlaylistSuggestion($resource) {
   return new $resource('/api/playlists/:playlistId/suggestions/:id', { id: '@id' }, {
-    update: { method: 'PUT' }
+    update: { method: 'PUT', params: { id: '@id', playlistId: '@playlistId' } }
   });
 }

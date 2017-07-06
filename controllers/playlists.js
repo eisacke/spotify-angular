@@ -93,6 +93,28 @@ function deleteSuggestionRoute(req, res, next) {
     .catch(next);
 }
 
+function upvoteSuggestionRoute(req, res, next) {
+  Playlist
+    .findOne({ spotifyId: req.params.id })
+    .exec()
+    .then((playlist) => {
+      if(!playlist) return res.notFound();
+
+      const suggestion = playlist.suggestions.id(req.params.suggestionId);
+      const index = suggestion.upvotes.indexOf(req.user.id);
+
+      if (index > -1) {
+        suggestion.upvotes.splice(index, 1);
+      } else {
+        suggestion.upvotes.push(req.user.id);
+      }
+
+      return playlist.save();
+    })
+    .then((playlist) => res.json(playlist))
+    .catch(next);
+}
+
 module.exports = {
   index: indexRoute,
   create: createRoute,
@@ -100,5 +122,6 @@ module.exports = {
   update: updateRoute,
   delete: deleteRoute,
   addSuggestion: addSuggestionRoute,
-  deleteSuggestion: deleteSuggestionRoute
+  deleteSuggestion: deleteSuggestionRoute,
+  upvoteSuggestion: upvoteSuggestionRoute
 };
